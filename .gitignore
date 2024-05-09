@@ -8,6 +8,8 @@ __pycache__/
 
 .azure/
 
+.ignore/
+
 labs-in-progress/
 params.json
 

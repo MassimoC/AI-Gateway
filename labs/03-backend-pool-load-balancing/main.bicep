@@ -196,7 +196,7 @@ resource backendOpenAI 'Microsoft.ApiManagement/service/backends@2023-05-01-prev
             interval: 'PT5M'
             statusCodeRanges: [
               {
-                min: 429
+                min: 403
                 max: 429
               }
             ]
