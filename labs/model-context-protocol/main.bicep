@@ -321,6 +321,8 @@ module githubAPIModule 'src/github/apim-api/api.bicep' = {
     apimServiceName: apimService.name
     APIPath: githubAPIPath
     APIServiceURL: 'https://${gitHubMCPServerContainerApp.properties.configuration.ingress.fqdn}/${githubAPIPath}'
+    appInsightsInstrumentationKey: appInsightsModule.outputs.instrumentationKey
+    appInsightsId: appInsightsModule.outputs.id
   }
 }
 
@@ -330,6 +332,8 @@ module weatherAPIModule 'src/weather/apim-api/api.bicep' = {
     apimServiceName: apimService.name
     APIPath: weatherAPIPath
     APIServiceURL: 'https://${weatherMCPServerContainerApp.properties.configuration.ingress.fqdn}/${weatherAPIPath}'
+    appInsightsInstrumentationKey: appInsightsModule.outputs.instrumentationKey
+    appInsightsId: appInsightsModule.outputs.id
   }
 }
 
