@@ -424,6 +424,8 @@ module serviceNowAPIModule 'src/servicenow/apim-api/api.bicep' = if(length(servi
     APIPath: servicenowAPIPath
     APIServiceURL: 'https://${servicenowMCPServerContainerApp.properties.configuration.ingress.fqdn}/${servicenowAPIPath}'
     serviceNowInstanceName: serviceNowInstanceName
+    appInsightsInstrumentationKey: appInsightsModule.outputs.instrumentationKey
+    appInsightsId: appInsightsModule.outputs.id
   }
 }
 

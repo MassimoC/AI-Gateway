@@ -15,7 +15,6 @@ param apimLoggerName string = 'apim-logger'
 
 var logSettings = {
   headers: [ 'Content-type', 'User-agent' ]
-  body: { bytes: 8192 }
 }
 
 
