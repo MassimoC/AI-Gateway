@@ -8,7 +8,7 @@ BOLD_GREEN = "\x1b[1;32m"
 BOLD_YELLOW = "\x1b[1;33m"
 
 print_command = lambda command='': print(f"⚙️ {BOLD_BLUE}Running: {command} {RESET_FORMATTING}")
-print_error = lambda message, output='', duration='': print(f"⛔ {BOLD_RED}{message}{RESET_FORMATTING} ⌚ {datetime.datetime.now().time()} {duration}{' ' if output else ''}{output}")
+print_error = lambda message, output='', duration='': print(f"❌ {BOLD_YELLOW}{message}{RESET_FORMATTING} ⌚ {datetime.datetime.now().time()} {duration}{' ' if output else ''}{output}")
 print_info = lambda message: print(f"👉🏽 {BOLD_BLUE}{message}{RESET_FORMATTING}")
 print_message = lambda message, output='', duration='': print(f"👉🏽 {BOLD_GREEN}{message}{RESET_FORMATTING} ⌚ {datetime.datetime.now().time()} {duration}{' ' if output else ''}{output}")
 print_ok = lambda message, output='', duration='': print(f"✅ {BOLD_GREEN}{message}{RESET_FORMATTING} ⌚ {datetime.datetime.now().time()} {duration}{' ' if output else ''}{output}")
@@ -212,6 +212,32 @@ def update_api_policy(subscription_id, resource_group_name, apim_service_name, a
         print("Updating the API policy...")
         # https://learn.microsoft.com/en-us/rest/api/apimanagement/api-policy/create-or-update?view=rest-apimanagement-2024-06-01-preview
         url = f"https://management.azure.com/subscriptions/{subscription_id}/resourceGroups/{resource_group_name}/providers/Microsoft.ApiManagement/service/{apim_service_name}/apis/{api_id}/policies/policy?api-version=2024-06-01-preview"
+        headers = {
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {access_token}"
+        }
+
+        body = {
+            "properties": {
+                "format": "rawxml",
+                "value": policy_xml
+            }
+        }
+
+        response = requests.put(url, headers = headers, json = body)
+        print_response_code(response)
+
+def update_api_operation_policy(subscription_id, resource_group_name, apim_service_name, api_id, operation_id, policy_xml):
+    # We first need to obtain an access token for the REST API
+    output = run(f"az account get-access-token --resource https://management.azure.com/",
+        f"Successfully obtained access token", f"Failed to obtain access token")
+
+    if output.success and output.json_data:
+        access_token = output.json_data['accessToken']
+
+        print("Updating the API policy...")
+        # https://learn.microsoft.com/en-us/rest/api/apimanagement/api-policy/create-or-update?view=rest-apimanagement-2024-06-01-preview
+        url = f"https://management.azure.com/subscriptions/{subscription_id}/resourceGroups/{resource_group_name}/providers/Microsoft.ApiManagement/service/{apim_service_name}/apis/{api_id}/operations/{operation_id}/policies/policy?api-version=2024-06-01-preview"
         headers = {
             "Content-Type": "application/json",
             "Authorization": f"Bearer {access_token}"
