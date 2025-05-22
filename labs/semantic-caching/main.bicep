@@ -71,8 +71,9 @@ module apimModule '../../modules/apim/v1/apim.bicep' = {
   }
 }
 
-resource apimService 'Microsoft.ApiManagement/service@2024-06-01-preview' existing = if (length(apimModule.outputs.id) > 0) {
+resource apimService 'Microsoft.ApiManagement/service@2024-06-01-preview' existing = {
   name: apiManagementName
+  scope: resourceGroup()
 }
 
 // https://learn.microsoft.com/azure/templates/microsoft.apimanagement/service/caches
@@ -84,6 +85,9 @@ resource apimCache 'Microsoft.ApiManagement/service/caches@2024-06-01-preview' =
     useFromLocation: 'Default'
     description: redisEnterprise.properties.hostName
   }
+  dependsOn: [
+    apimService
+  ]
 }
 
 // 2. Cognitive Services
@@ -121,7 +125,7 @@ resource embeddingsDeployment 'Microsoft.CognitiveServices/accounts/deployments@
   ]
 }
 
-// 3. APIM OpenAI API
+//3. APIM OpenAI API
 resource backendEmbeddings 'Microsoft.ApiManagement/service/backends@2024-06-01-preview' = {
   name: 'embeddings-backend' // this name is hard coded in the policy.xml file
   parent: apimService
