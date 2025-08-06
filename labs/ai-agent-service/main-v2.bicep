@@ -198,88 +198,6 @@ resource placeOrderWorkflow 'Microsoft.Logic/workflows@2019-05-01' = {
 }
 
 
-resource bingSearch 'Microsoft.Bing/accounts@2020-06-10' = {
-  name: 'bingsearch-${resourceSuffix}'
-  location: 'global'
-  sku: {
-    name: 'G1'
-  }
-  properties: {
-    statisticsEnabled: false
-  }
-  kind: 'Bing.Grounding'
-}
-
-// Creates the Azure Foundry connection to your Azure App Insights resource
-resource bingSearchConnection 'Microsoft.CognitiveServices/accounts/connections@2025-04-01-preview' = {
-  name: 'bingSearch-connection'
-  parent: aiFoundry
-  properties: {
-    category: 'ApiKey'
-    target: 'https://api.bing.microsoft.com/'
-    authType: 'ApiKey'
-    isSharedToAll: true
-    credentials: {
-      key: bingSearch.listKeys().key1
-    }
-    metadata: {
-      ApiType: 'Azure'
-      Type: 'bing_grounding'
-      ResourceId: bingSearch.id
-    }
-  }
-}
-
-resource weatherAPIConnection 'Microsoft.CognitiveServices/accounts/connections@2025-04-01-preview' = {
-  name: 'WeatherAPI'
-  parent: aiFoundry
-  properties: {
-    category: 'CustomKeys'
-    authType: 'CustomKeys'
-    target: '${apimService.properties.gatewayUrl}/${weatherAPIPath}'
-    isSharedToAll: true
-    credentials: {
-      keys: {
-        'api-key': apimSubscription.listSecrets().primaryKey
-      }
-    }
-  }
-}
-
-resource placeOrderAPIConnection 'Microsoft.CognitiveServices/accounts/connections@2025-04-01-preview' = {
-  name: 'PlaceOrderAPI'
-  parent: aiFoundry
-  properties: {
-    category: 'CustomKeys'
-    authType: 'CustomKeys'
-    target: '${apimService.properties.gatewayUrl}/${placeOrderAPIPath}'
-    isSharedToAll: true
-    credentials: {
-      keys: {
-        'api-key': apimSubscription.listSecrets().primaryKey
-      }
-    }
-  }
-}
-
-resource productCatalogAPIConnection 'Microsoft.CognitiveServices/accounts/connections@2025-04-01-preview' = {
-  name: 'ProductCatalogAPI'
-  parent: aiFoundry
-  properties: {
-    category: 'CustomKeys'
-    authType: 'CustomKeys'
-    target: '${apimService.properties.gatewayUrl}/${productCatalogAPIPath}'
-    isSharedToAll: true
-    credentials: {
-      keys: {
-        'api-key': apimSubscription.listSecrets().primaryKey
-      }
-    }
-  }
-}
-
-
-
 // https://learn.microsoft.com/azure/templates/microsoft.apimanagement/service/apis
 resource weatherAPI 'Microsoft.ApiManagement/service/apis@2024-06-01-preview' = {
   name: 'weather-api'
@@ -479,6 +397,87 @@ resource productCatalogAPIDiagnostics 'Microsoft.ApiManagement/service/apis/diag
 
 
 
+// resource bingSearch 'Microsoft.Bing/accounts@2020-06-10' = {
+//   name: 'bingsearch-${resourceSuffix}'
+//   location: 'global'
+//   sku: {
+//     name: 'G1'
+//   }
+//   properties: {
+//     statisticsEnabled: false
+//   }
+//   kind: 'Bing.Grounding'
+// }
+
+// // Creates the Azure Foundry connection to your Azure App Insights resource
+// resource bingSearchConnection 'Microsoft.CognitiveServices/accounts/connections@2025-04-01-preview' = {
+//   name: 'bingSearch-connection'
+//   parent: aiFoundry
+//   properties: {
+//     category: 'ApiKey'
+//     target: 'https://api.bing.microsoft.com/'
+//     authType: 'ApiKey'
+//     isSharedToAll: true
+//     credentials: {
+//       key: bingSearch.listKeys().key1
+//     }
+//     metadata: {
+//       ApiType: 'Azure'
+//       Type: 'bing_grounding'
+//       ResourceId: bingSearch.id
+//     }
+//   }
+// }
+
+resource weatherAPIConnection 'Microsoft.CognitiveServices/accounts/connections@2025-04-01-preview' = {
+  name: 'WeatherAPI'
+  parent: aiFoundry
+  properties: {
+    category: 'CustomKeys'
+    authType: 'CustomKeys'
+    target: '${apimService.properties.gatewayUrl}/${weatherAPIPath}'
+    isSharedToAll: true
+    credentials: {
+      keys: {
+        'api-key': apimSubscription.listSecrets().primaryKey
+      }
+    }
+  }
+}
+
+resource placeOrderAPIConnection 'Microsoft.CognitiveServices/accounts/connections@2025-04-01-preview' = {
+  name: 'PlaceOrderAPI'
+  parent: aiFoundry
+  properties: {
+    category: 'CustomKeys'
+    authType: 'CustomKeys'
+    target: '${apimService.properties.gatewayUrl}/${placeOrderAPIPath}'
+    isSharedToAll: true
+    credentials: {
+      keys: {
+        'api-key': apimSubscription.listSecrets().primaryKey
+      }
+    }
+  }
+}
+
+resource productCatalogAPIConnection 'Microsoft.CognitiveServices/accounts/connections@2025-04-01-preview' = {
+  name: 'ProductCatalogAPI'
+  parent: aiFoundry
+  properties: {
+    category: 'CustomKeys'
+    authType: 'CustomKeys'
+    target: '${apimService.properties.gatewayUrl}/${productCatalogAPIPath}'
+    isSharedToAll: true
+    credentials: {
+      keys: {
+        'api-key': apimSubscription.listSecrets().primaryKey
+      }
+    }
+  }
+}
+
+
 // ------------------
 //    OUTPUTS
 // ------------------
@@ -492,11 +491,11 @@ output apimSubscriptions array = apimModule.outputs.apimSubscriptions
 
 output foundryProjectEndpoint string = foundryModule.outputs.extendedAIServicesConfig[0].foundryProjectEndpoint
 
-output bingSearchConnectionId string = '/subscriptions/${subscription().subscriptionId}/resourceGroups/${resourceGroup().name}/providers/Microsoft.CognitiveServices/accounts/${foundryModule.outputs.extendedAIServicesConfig[0].cognitiveServiceName}/projects/${foundryProjectName}/connections/${bingSearchConnection.name}'
+//output bingSearchConnectionId string = '/subscriptions/${subscription().subscriptionId}/resourceGroups/${resourceGroup().name}/providers/Microsoft.CognitiveServices/accounts/${foundryModule.outputs.extendedAIServicesConfig[0].cognitiveServiceName}/projects/${foundryProjectName}/connections/${bingSearchConnection.name}'
 
-output weatherAPIConnectionId string = '/subscriptions/${subscription().subscriptionId}/resourceGroups/${resourceGroup().name}/providers/Microsoft.CognitiveServices/accounts/${foundryModule.outputs.extendedAIServicesConfig[0].cognitiveServiceName}/projects/${foundryProjectName}/connections/${weatherAPIConnection.name}'
+output weatherAPIConnectionId string = '/subscriptions/${subscription().subscriptionId}/resourceGroups/${resourceGroup().name}/providers/Microsoft.CognitiveServices/accounts/${foundryModule.outputs.extendedAIServicesConfig[0].cognitiveServiceName}/projects/${foundryProjectName}-foundry1/connections/${weatherAPIConnection.name}'
 
-output placeOrderAPIConnectionId string = '/subscriptions/${subscription().subscriptionId}/resourceGroups/${resourceGroup().name}/providers/Microsoft.CognitiveServices/accounts/${foundryModule.outputs.extendedAIServicesConfig[0].cognitiveServiceName}/projects/${foundryProjectName}/connections/${placeOrderAPIConnection.name}'
+output placeOrderAPIConnectionId string = '/subscriptions/${subscription().subscriptionId}/resourceGroups/${resourceGroup().name}/providers/Microsoft.CognitiveServices/accounts/${foundryModule.outputs.extendedAIServicesConfig[0].cognitiveServiceName}/projects/${foundryProjectName}-foundry1/connections/${placeOrderAPIConnection.name}'
 
-output productCatalogAPIConnectionId string = '/subscriptions/${subscription().subscriptionId}/resourceGroups/${resourceGroup().name}/providers/Microsoft.CognitiveServices/accounts/${foundryModule.outputs.extendedAIServicesConfig[0].cognitiveServiceName}/projects/${foundryProjectName}/connections/${productCatalogAPIConnection.name}'
+output productCatalogAPIConnectionId string = '/subscriptions/${subscription().subscriptionId}/resourceGroups/${resourceGroup().name}/providers/Microsoft.CognitiveServices/accounts/${foundryModule.outputs.extendedAIServicesConfig[0].cognitiveServiceName}/projects/${foundryProjectName}-foundry1/connections/${productCatalogAPIConnection.name}'
 
